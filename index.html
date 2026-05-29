@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Society for Applied Sciences and Technology</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+    <style>
+        /* --- LENIS SMOOTH SCROLLING --- */
+        html.lenis, html.lenis body {
+            height: auto;
+        }
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        /* --- VARIABLES (Navy & Gold - Royal Society Look) --- */
+        :root {
+            --primary-green: #0f2c59; /* Deep Royal Navy */
+            --accent-green: #c69749;  /* Elegant Muted Gold */
+            --text-dark: #1a1a1a;
+            --text-light: #4a4a4a;
+            --white: #ffffff;
+            --off-white: #f4f6f8;
+            --font-headings: 'Playfair Display', serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* --- SMOOTH SCROLL ACCURATE OFFSETS --- */
+        header, section, footer {
+            scroll-margin-top: 90px;
+        }
+
+        /* --- LIVE BACKGROUND SETUP --- */
+        #canvas-network {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Puts it behind everything */
+            /* Deep Navy Gradient */
+            background: linear-gradient(135deg, #05162e 0%, #0a2142 100%);
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #05162e 0%, #0a2142 100%); /* Premium fallback gradient */
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, .logo {
+            font-family: var(--font-headings);
+        }
+
+        /* Make sections readable over the background */
+        .section-padding, .footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- TYPOGRAPHY & UTILS --- */
+        h1 { font-weight: 700; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.2; color: var(--accent-green); }
+        h2 { font-weight: 700; font-size: clamp(1.8rem, 4vw, 2.2rem); }
+        h3 { font-weight: 700; }
+        
+        /* Justify content text */
+        .hero-text .description, .section-desc, .focus-card p, .award-info p, .policy-box p {
+            text-align: justify;
+        }
+        
+        /* Updated Section Titles for Dark Background Compatibility */
+        .section-title {
+            color: var(--accent-green); /* Gold Titles */
+            margin-bottom: 20px;
+        }
+        
+        .section-desc {
+            color: rgba(255,255,255,0.8); /* Light text for description */
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* Specific overrides for white cards */
+        .bg-light .section-title, .bg-light .section-desc {
+            color: var(--primary-green); /* Dark text on light backgrounds */
+        }
+        .bg-light .section-desc { color: var(--text-light); }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            cursor: pointer;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .btn-dark { background-color: var(--accent-green); color: var(--primary-green); font-weight: 700; }
+        .btn-white { background-color: var(--white); color: var(--primary-green); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .subtitle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 15px;
+        }
+        .bg-light .subtitle { color: var(--primary-green); }
+        
+        .icon-accent { color: var(--accent-green); font-size: 20px; line-height: 0; }
+
+        .check-list li { margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; color: rgba(255,255,255,0.9); }
+        .check-list i, .check-list svg { color: var(--accent-green); margin-top: 5px; flex-shrink: 0; width: 16px; height: 16px; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+
+        /* --- IMAGE STYLES --- */
+        img {
+            filter: grayscale(100%);
+            transition: filter 0.5s ease, transform 0.5s ease;
+            cursor: pointer;
+            backface-visibility: hidden;
+            max-width: 100%;
+        }
+        img:hover, img:active { filter: grayscale(0%); transform: scale(1.02); }
+
+
+
+        /* --- NAVIGATION --- */
+        .navbar {
+            padding: 18px 0;
+            background: rgba(5, 22, 46, 0.85); /* Deepest navy blue matching the footer with transparency */
+            backdrop-filter: blur(16px) saturate(180%); /* Premium glassmorphism blur effect */
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(198, 151, 73, 0.15); /* Soft premium gold border */
+            opacity: 0; /* Initial state for animation */
+            animation: fadeInUp 1s ease-out 0.8s forwards;
+            transition: all 0.4s ease;
+        }
+        .nav-content { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            gap: 40px; /* Spacing between logo, links, button */
+            padding: 0 20px;
+        }
+        .logo { 
+            font-weight: 700; 
+            font-size: 1.5rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            color: var(--white); /* White logo text */
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .logo:hover {
+            color: var(--accent-green);
+        }
+        .logo-icon { 
+            width: 38px; 
+            height: 38px; 
+            background: var(--accent-green); 
+            display: flex; /* Centering for potential letter */
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%; /* Circle shape */
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .logo-img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+            filter: none !important;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            background: transparent;
+            cursor: pointer !important;
+        }
+        .logo:hover .logo-img {
+            transform: scale(1.08) rotate(3deg);
+        }
+
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a:not(.btn) {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.75); /* Light gray links */
+            position: relative;
+            padding: 6px 0;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:not(.btn)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-green);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-links a:not(.btn):hover {
+            color: var(--accent-green);
+        }
+        .nav-links a:not(.btn):hover::after, 
+        .nav-links a:not(.btn).active::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .nav-links a:not(.btn).active {
+            color: var(--accent-green);
+        }
+
+        /* Join button in navbar */
+        .navbar .btn-white {
+            background: transparent;
+            color: var(--white);
+            border: 1.5px solid var(--accent-green);
+            padding: 10px 22px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(198, 151, 73, 0.1);
+        }
+        .navbar .btn-white:hover {
+            background: var(--accent-green);
+            color: var(--primary-green);
+            box-shadow: 0 0 15px rgba(198, 151, 73, 0.4);
+            transform: translateY(-2px);
+            opacity: 1;
+        }
+
+        /* Mobile Menu Button */
+        .hamburger { display: none; cursor: pointer; font-size: 1.5rem; color: var(--white); transition: color 0.3s ease; }
+        .hamburger:hover { color: var(--accent-green); }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            padding: 60px 0;
+            /* Transparent background to see canvas */
+            background: transparent;
+            overflow: hidden;
+        }
+        .hero-content { display: flex; align-items: center; gap: 50px; }
+        .hero-text { flex: 1; opacity: 0; animation: fadeInUp 1s ease-out forwards; }
+        .hero-text h1 { margin-bottom: 20px; }
+        .hero-text .description { color: rgba(255,255,255,0.9); }
+        .hero-buttons { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 30px; }
+        .link-text { color: var(--white); }
+        
+        .hero-images { flex: 1; position: relative; opacity: 0; animation: fadeInUp 1s ease-out 0.4s forwards; }
+        .image-collage {
+            position: relative;
+            width: 100%;
+            height: 450px; /* Adjust as needed */
+        }
+        .collage-img-1, .collage-img-2, .collage-img-3 {
+            position: absolute;
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .collage-img-1 {
+            width: 65%;
+            height: 70%;
+            top: 15%;
+            left: 0;
+            border-radius: 60px 20px 20px 60px;
+            z-index: 1;
+        }
+        .collage-img-2 {
+            width: 50%;
+            height: 55%;
+            top: 0;
+            right: 0;
+            border-radius: 20px 60px 20px 20px;
+            z-index: 2;
+        }
+        .collage-img-3 {
+            width: 55%;
+            height: 60%;
+            bottom: 0;
+            right: 5%;
+            border-radius: 20px 20px 60px 20px;
+            z-index: 3;
+        }
+
+        /* --- MARQUEE --- */
+        .marquee-strip { background: var(--accent-green); padding: 15px 0; overflow: hidden; white-space: nowrap; }
+        .marquee-content { display: inline-block; animation: marquee 25s linear infinite; color: var(--primary-green); font-weight: 700; font-size: 1rem; }
+        .marquee-content span { margin-right: 40px; }
+        .marquee-content i, .marquee-content svg { color: var(--white); margin-left: 10px; display: inline-block; vertical-align: middle; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- SECTIONS GENERAL --- */
+        .section-padding { padding: 80px 0; }
+        .bg-light { background-color: var(--white); } /* Solid white background for readability */
+        .split-content { display: flex; gap: 60px; align-items: flex-start; }
+        .split-text { flex: 1; }
+        .split-image { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .split-image img { width: 100%; height: 250px; object-fit: cover; border-radius: 20px; }
+
+        /* --- FOCUS GRID (Interactive Navy) --- */
+        .focus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .focus-card {
+            background: var(--off-white);
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            color: var(--text-dark);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .focus-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px;
+            background: var(--accent-green); transform: scaleX(0); transform-origin: right; transition: transform 0.4s ease;
+        }
+        .focus-card:hover { background: var(--primary-green); transform: translateY(-5px); }
+        .focus-card:hover::after { transform: scaleX(1); transform-origin: left; }
+        .focus-card h4 { color: var(--primary-green); margin-bottom: 10px; font-size: 1.2rem; transition: 0.3s; }
+        .focus-card p { font-size: 0.9rem; color: var(--text-light); transition: 0.3s; }
+        .focus-card:hover h4 { color: var(--white); }
+        .focus-card:hover p { color: rgba(255,255,255,0.8); }
+
+        /* --- MEMBERSHIP --- */
+        .dark-section { background: rgba(15, 44, 89, 0.8); /* Semi-transparent navy */ color: var(--white); backdrop-filter: blur(10px); }
+        .dark-section .section-title { color: var(--white); }
+        .dark-section .section-desc { color: rgba(255,255,255,0.8); }
+        
+        .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 50px; }
+        .membership-benefits { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; margin-bottom: 50px; border: 1px solid rgba(255,255,255,0.1); }
+        .benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+        .benefit-item { display: flex; align-items: flex-start; gap: 10px; }
+        .benefit-item i, .benefit-item svg { color: var(--accent-green); margin-top: 5px; flex-shrink: 0; font-size: 18px; width: 18px; height: 18px; }
+        
+        .service-card { border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; background: var(--white); color: var(--text-dark); }
+        .service-card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-content p { text-align: left; }
+        .highlight-card { background: var(--accent-green); color: var(--primary-green); }
+        
+        .policy-box { background: var(--accent-green); color: var(--primary-green); padding: 30px; border-radius: 20px; margin-top: 30px; border-left: 5px solid var(--primary-green); }
+
+        /* --- AWARDS (Royal Outline) --- */
+        .awards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 40px; }
+        .award-item {
+            display: flex; 
+            gap: 20px; 
+            background: rgba(255, 255, 255, 0.03); 
+            padding: 25px;
+            border-radius: 12px; 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            color: var(--white);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            position: relative;
+            overflow: hidden;
+        }
+        .award-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(198, 151, 73, 0.15) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+        .award-item:hover { 
+            transform: translateY(-6px); 
+            border-color: rgba(198, 151, 73, 0.5); 
+            box-shadow: 0 15px 35px rgba(198, 151, 73, 0.15), 0 0 25px rgba(198, 151, 73, 0.05); 
+            background: rgba(255, 255, 255, 0.06); 
+        }
+        .award-item:hover::before {
+            opacity: 1;
+        }
+        .award-icon {
+            width: 55px; 
+            height: 55px; 
+            background: rgba(198, 151, 73, 0.15); 
+            border-radius: 50%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--accent-green); 
+            font-size: 1.3rem; 
+            flex-shrink: 0; 
+            border: 1.5px solid rgba(198, 151, 73, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+        }
+        .award-item:hover .award-icon {
+            background: var(--accent-green);
+            color: var(--primary-green);
+            transform: scale(1.1) rotate(12deg);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 15px rgba(198, 151, 73, 0.4);
+        }
+        .award-info {
+            position: relative;
+            z-index: 1;
+        }
+        .award-info h5 { 
+            color: var(--white); 
+            font-size: 1.05rem; 
+            margin-bottom: 6px; 
+            line-height: 1.3; 
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+        .award-item:hover .award-info h5 {
+            color: var(--accent-green);
+        }
+        .award-info p { 
+            font-size: 0.88rem; 
+            color: rgba(255, 255, 255, 0.7); 
+            line-height: 1.5;
+            text-align: left !important; /* Overriding global justify styles if necessary */
+        }
+
+        /* --- FOOTER --- */
+        .footer { 
+            background: linear-gradient(180deg, #031124 0%, #010710 100%); /* Deep space rich gradient */
+            color: var(--white); 
+            padding: 75px 0 30px; 
+            border-top: 1.5px solid rgba(198, 151, 73, 0.15); /* Soft premium gold separator line */
+            position: relative;
+        }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; margin-bottom: 45px; }
+        .footer-col {
+            flex: 1;
+            min-width: 250px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            padding: 20px; 
+            border-left: 2px solid transparent; /* Elegant accent line indicator */
+            border-radius: 4px;
+        }
+        .footer-col:hover {
+            transform: translateX(5px); /* Smooth subtle right slide */
+            border-left: 2px solid var(--accent-green); /* Revealing gold indicator line */
+            background: rgba(255, 255, 255, 0.02); /* Glassy background highlight */
+        }
+        .footer-col h4 { 
+            margin-bottom: 22px; 
+            color: var(--accent-green); 
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+            font-family: var(--font-headings);
+        }
+        .footer-col p { margin-bottom: 12px; opacity: 0.85; font-size: 0.92rem; line-height: 1.6; }
+        .footer-col p i {
+            color: var(--accent-green);
+            margin-right: 12px;
+            width: 18px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .footer-col p a {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .footer-col p a:hover {
+            color: var(--accent-green);
+            padding-left: 3px;
+        }
+        .footer-col ul li {
+            margin-bottom: 12px;
+        }
+        .footer-col ul li a {
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            font-size: 0.92rem;
+        }
+        .footer-col ul li a::before {
+            content: '→';
+            position: absolute;
+            left: -15px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        .footer-col ul li a:hover {
+            color: var(--accent-green);
+            transform: translateX(12px);
+        }
+        .footer-col ul li a:hover::before {
+            opacity: 1;
+            left: -10px;
+        }
+        .social-media {
+            margin-top: 25px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .social-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.8);
+            margin-right: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .social-icon:hover {
+            background: var(--accent-green);
+            color: var(--primary-green);
+            transform: translateY(-4px) rotate(360deg);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 15px rgba(198, 151, 73, 0.5);
+        }
+        .copyright { 
+            border-top: 1px solid rgba(255,255,255,0.08); 
+            padding-top: 25px; 
+            margin-top: 20px;
+            text-align: center; 
+            font-size: 0.85rem; 
+            color: rgba(255, 255, 255, 0.55);
+            letter-spacing: 0.5px;
+        }
+
+        /* --- RESPONSIVE QUERIES --- */
+        @media (max-width: 1024px) {
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-content { gap: 30px; }
+        }
+
+        @media (max-width: 992px) {
+            .section-padding { padding: 50px 0; }
+            .navbar {
+                width: 100%;
+                border-radius: 0;
+                margin: 0;
+                border-left: none;
+                border-right: none;
+                border-top: none;
+            }
+            .hamburger { display: block; }
+            .nav-content { gap: 20px; }
+            .nav-links {
+                position: fixed; top: 90px; right: 0; width: 70%; height: calc(100vh - 90px);
+                background: var(--white); flex-direction: column; align-items: flex-start;
+                padding: 40px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: transform 0.3s ease, visibility 0.3s ease; gap: 20px;
+                transform: translateX(100%);
+                visibility: hidden;
+            }
+            .nav-links.active { transform: translateX(0); visibility: visible; }
+            .nav-links a:not(.btn) {
+                color: var(--text-dark); /* Revert to dark text on white mobile menu */
+            }
+            .nav-links a:not(.btn)::after {
+                display: none; /* Disable sliding underline animation in mobile view */
+            }
+            .nav-links a:not(.btn):hover, .nav-links a:not(.btn).active {
+                color: var(--primary-green);
+            }
+            .nav-links li { width: 100%; }
+            .btn-dark, .btn-white { width: 100%; justify-content: center; }
+            .hero-section { background: transparent; }
+            .hero-content { flex-direction: column; text-align: center; }
+            .hero-buttons { justify-content: center; }
+            .hero-images { width: 100%; }
+            .image-collage {
+                display: flex;
+                gap: 15px;
+                height: auto;
+                justify-content: center;
+                margin-top: 30px;
+            }
+            .collage-img-1, .collage-img-2, .collage-img-3 {
+                position: relative;
+                width: 30%;
+                height: 180px;
+                top: auto;
+                left: auto;
+                right: auto;
+                bottom: auto;
+                border-radius: 15px !important;
+            }
+            .split-content { flex-direction: column; gap: 40px; }
+            .split-image { width: 100%; }
+            .services-grid { grid-template-columns: 1fr; }
+            .benefits-grid { grid-template-columns: 1fr; }
+            .awards-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .footer-col { width: 100%; }
+            .image-collage {
+                gap: 10px;
+            }
+            .collage-img-1, .collage-img-2, .collage-img-3 {
+                height: 110px;
+                border-radius: 10px !important;
+            }
+        }
+
+        /* --- PRELOADER & GOLDEN QUANTUM ORBIT --- */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(circle at center, #05162e 0%, #010710 100%); /* Deep luxurious vignette background */
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Align container and text vertically */
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s;
+        }
+
+
+        #preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-container::after {
+            content: 'SAST';
+            position: absolute;
+            bottom: -40px;
+            font-family: var(--font-headings);
+            font-size: 1.3rem;
+            color: var(--accent-green);
+            letter-spacing: 6px;
+            font-weight: 700;
+            text-indent: 6px; /* Offset spacing to center letter-spacing */
+            animation: textPulse 2.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .orbit {
+            position: absolute;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Added quantum "electrons" as small glowing dots travelling on orbits */
+        .orbit::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--white);
+            box-shadow: 0 0 12px 2px var(--accent-green);
+        }
+
+        .ring-1 {
+            border-top-color: var(--accent-green);
+            border-left-color: rgba(198, 151, 73, 0.1);
+            transform: rotateX(70deg) rotateY(20deg) rotateZ(0deg);
+            animation: spin1 3s linear infinite;
+        }
+        .ring-1::after {
+            top: 23px;
+            left: 23px;
+            background: var(--accent-green);
+            box-shadow: 0 0 15px 3px var(--accent-green);
+        }
+
+        .ring-2 {
+            border-right-color: var(--white);
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+            transform: rotateX(30deg) rotateY(60deg) rotateZ(0deg);
+            animation: spin2 2.5s linear infinite;
+        }
+        .ring-2::after {
+            bottom: 23px;
+            left: 23px;
+            background: var(--white);
+            box-shadow: 0 0 15px 3px var(--white);
+        }
+
+        .ring-3 {
+            border-bottom-color: var(--accent-green);
+            border-right-color: rgba(198, 151, 73, 0.1);
+            transform: rotateX(55deg) rotateY(-30deg) rotateZ(0deg);
+            animation: spin3 3.5s linear infinite;
+        }
+        .ring-3::after {
+            top: 23px;
+            right: 23px;
+            background: var(--accent-green);
+            box-shadow: 0 0 15px 3px var(--accent-green);
+        }
+
+        .core-logo {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            background: transparent;
+            filter: drop-shadow(0 0 15px rgba(198, 151, 73, 0.45)) !important;
+            cursor: default !important;
+            animation: logoPulse 2.5s ease-in-out infinite alternate;
+            z-index: 2;
+        }
+
+        @keyframes spin1 {
+            from { transform: rotateX(70deg) rotateY(20deg) rotateZ(0deg); }
+            to { transform: rotateX(70deg) rotateY(20deg) rotateZ(360deg); }
+        }
+
+        @keyframes spin2 {
+            from { transform: rotateX(30deg) rotateY(60deg) rotateZ(0deg); }
+            to { transform: rotateX(30deg) rotateY(60deg) rotateZ(-360deg); } /* Reverse direction for organic feel */
+        }
+
+        @keyframes spin3 {
+            from { transform: rotateX(55deg) rotateY(-30deg) rotateZ(0deg); }
+            to { transform: rotateX(55deg) rotateY(-30deg) rotateZ(360deg); }
+        }
+
+        @keyframes logoPulse {
+            0% { transform: scale(0.85); filter: drop-shadow(0 0 10px rgba(198, 151, 73, 0.3)) !important; }
+            100% { transform: scale(1.03); filter: drop-shadow(0 0 25px rgba(198, 151, 73, 0.65)) !important; }
+        }
+
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.6; transform: scale(0.98); letter-spacing: 5px; }
+            50% { opacity: 1; transform: scale(1.02); letter-spacing: 8px; color: var(--white); }
+        }
+
+
+        /* Custom text justification preserved on mobile viewports */
+    </style>
+</head>
+<body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-container">
+            <div class="orbit ring-1"></div>
+            <div class="orbit ring-2"></div>
+            <div class="orbit ring-3"></div>
+            <img src="SAST bg remove.png" alt="SAST" class="core-logo">
+        </div>
+    </div>
+
+    <canvas id="canvas-network"></canvas>
+
+
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="#home" class="logo">
+                <img src="SAST bg remove.png" alt="SAST Logo" class="logo-img">
+                <span>SAST</span>
+            </a>
+            <div class="hamburger" onclick="toggleMenu()">
+                <i class="fas fa-bars menu-open-icon"></i>
+                <i class="fas fa-times menu-close-icon" style="display: none;"></i>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#membership">Membership</a></li>
+                <li><a href="#awards">Awards</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#membership" class="btn btn-white">Join Now</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header id="home" class="hero-section">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <p class="subtitle"><span class="icon-accent">••</span> Welcome to SAST</p>
+                <h1>Society for Applied Sciences & Technology</h1>
+                <p class="description">The Society for Applied Sciences and Technology (SAST) is a dynamic organization dedicated to fostering collaboration, research, and development in the fields of applied sciences and technologies. We bring together professionals, scholars, industrialists, NGO’s and enthusiasts from these disciplines to explore innovative solutions, advance education, and promote the integration of science and technology in today's rapidly evolving world.</p>
+                <div class="hero-buttons">
+                    <a href="#membership" class="btn btn-dark">Become a Member <i class="fas fa-arrow-right"></i></a>
+                    <a href="#about" class="link-text">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-images">
+                <div class="image-collage">
+                    <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lab" class="collage-img-1">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Tech" class="collage-img-2">
+                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Energy" class="collage-img-3">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="marquee-strip">
+        <div class="marquee-content">
+            <span>Research & Innovation <i class="fas fa-asterisk"></i></span>
+            <span>Education & Training <i class="fas fa-asterisk"></i></span>
+            <span>Conferences & Events <i class="fas fa-asterisk"></i></span>
+            <span>Networking & Community <i class="fas fa-asterisk"></i></span>
+            <span>Sustainability & Social Impact <i class="fas fa-asterisk"></i></span>
+            <span>Research & Innovation <i class="fas fa-asterisk"></i></span>
+            <span>Education & Training <i class="fas fa-asterisk"></i></span>
+        </div>
+    </div>
+
+    <section id="vision" class="section-padding reveal">
+        <div class="container split-content">
+            <div class="split-text">
+                <p class="subtitle"><span class="icon-accent">••</span> Our Purpose</p>
+                <h2 class="section-title">Vision & Mission</h2>
+                <h4 style="color: var(--accent-green); margin-bottom: 10px;">Our Vision</h4>
+                <p class="section-desc">To be a leading organization that empowers individuals and institutions to achieve excellence in applied science and technology, while fostering global collaboration and knowledge-sharing for societal advancement.</p>
+                <h4 style="color: var(--accent-green); margin-bottom: 10px;">Our Mission</h4>
+                <ul class="check-list">
+                    <li><i class="fas fa-check-circle"></i> To promote the advancement and application of scientific and technological knowledge for societal benefit.</li>
+                    <li><i class="fas fa-check-circle"></i> To encourage research, innovation, and interdisciplinary collaboration.</li>
+                    <li><i class="fas fa-check-circle"></i> To provide a platform for knowledge exchange among scientists, technologists, and students.</li>
+                    <li><i class="fas fa-check-circle"></i> To organize seminars, workshops, and training programs for capacity building.</li>
+                    <li><i class="fas fa-check-circle"></i> To foster sustainable solutions addressing environmental, social, and economic challenges.</li>
+                    <li><i class="fas fa-check-circle"></i> To recognize and honour outstanding contributions in science and technology.</li>
+                </ul>
+            </div>
+            <div class="split-image">
+                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Global Vision">
+                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Knowledge Exchange">
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section-padding bg-light reveal">
+        <div class="container">
+            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <p class="subtitle" style="justify-content: center;"><span class="icon-accent">••</span> Who We Are</p>
+                <h2 class="section-title">Bridging Research & Real-World Solutions</h2>
+                <p class="section-desc">The Society for Applied Sciences and Technology (SAST) is a professional organization committed to advancing the practical applications of science and technology for the betterment of society. We serve as a collaborative platform for scientists, researchers, academicians, and innovators to share knowledge, address global challenges, and drive technological progress.</p>
+            </div>
+
+            <div class="focus-grid">
+                <div class="focus-card reveal"><h4>Research & Innovation</h4><p>Advancing interdisciplinary research and fostering innovative applications of science and technology.</p></div>
+                <div class="focus-card reveal delay-100"><h4>Education & Training</h4><p>Enhancing knowledge and skills through workshops, seminars, and professional development programs.</p></div>
+                <div class="focus-card reveal delay-200"><h4>Conferences & Events</h4><p>Organizing national and international forums to share ideas, research outcomes, and best practices.</p></div>
+                <div class="focus-card reveal"><h4>Networking & Community</h4><p>Building a collaborative platform for scientists, technologists, educators, and entrepreneurs.</p></div>
+                <div class="focus-card reveal delay-100"><h4>Sustainability & Social Impact</h4><p>Promoting the responsible use of science and technology to support environmental conservation and societal well-being.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="membership" class="section-padding dark-section reveal">
+        <div class="container">
+            <div class="services-header">
+                <div>
+                    <p class="subtitle light"><span class="icon-accent">••</span> Join Us</p>
+                    <h2 class="section-title">Membership</h2>
+                    <p class="section-desc">Whether you are a scientist, researcher, or student, SAST welcomes you.</p>
+                </div>
+            </div>
+
+            <div class="membership-benefits reveal">
+                <h3 style="color:white; margin-bottom: 20px;">Exclusive Member Benefits</h3>
+                <div class="benefits-grid">
+                    <div class="benefit-item"><i class="fas fa-tag"></i><p><strong>Event Discounts & Recognition:</strong> Special discounts on SAST events and recognition for contributions.</p></div>
+                    <div class="benefit-item"><i class="fas fa-globe"></i><p><strong>Global Networking:</strong> Connect with experts, educators, and researchers worldwide.</p></div>
+                    <div class="benefit-item"><i class="fas fa-book-open"></i><p><strong>Learning Opportunities:</strong> Workshops, webinars, and conferences for professional skills.</p></div>
+                    <div class="benefit-item"><i class="fas fa-medal"></i><p><strong>Awards & Honors:</strong> Eligibility for prestigious awards presented by SAST.</p></div>
+                </div>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Honorary">
+                    <div class="card-content"><h3>Honorary Membership</h3><p>Prestigious recognition for individuals who have made exceptional contributions to applied sciences. Honorary members are invited to participate in key activities.</p></div>
+                </div>
+                <div class="service-card highlight-card reveal delay-100">
+                    <img src="https://images.unsplash.com/photo-1532187643603-ba119ca4109e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Fellow">
+                    <div class="card-content"><h3>Fellow Membership</h3><p>Conferred upon distinguished professionals for outstanding academic achievements, leadership, and impactful service to the society. Gain prominent visibility and influence.</p></div>
+                </div>
+                <div class="service-card reveal delay-200">
+                    <img src="https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Corporate">
+                    <div class="card-content"><h3>Corporate Membership</h3><p>For organizations committed to advancing applied sciences. Benefit from exclusive networking, collaborations, and specialized events.</p></div>
+                </div>
+            </div>
+
+            <div class="policy-box reveal">
+                <h4 style="color: var(--primary-green); margin-bottom: 10px;">Apply for Membership</h4>
+                <p>To apply, submit your detailed CV to <strong><a href="mailto:president.sast@gmail.com" style="color: inherit; text-decoration: underline;">president.sast@gmail.com</a></strong></p>
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                <p style="font-size: 0.9rem; color: rgba(15, 44, 89, 0.85);"><strong>Cancellation Policy:</strong> Members may cancel their membership at any time. However, no refunds will be issued for the current membership period. To cancel, please contact us at <strong><a href="mailto:president.sast@gmail.com" style="color: inherit; text-decoration: underline;">president.sast@gmail.com</a></strong>.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="awards" class="section-padding reveal">
+        <div class="container">
+            <p class="subtitle"><span class="icon-accent">••</span> Excellence</p>
+            <h2 class="section-title">SAST Awards</h2>
+            
+            <div class="awards-grid">
+                <div class="award-item reveal"><div class="award-icon"><i class="fas fa-trophy"></i></div><div class="award-info"><h5>SAST Lifetime Achievement Award</h5><p>Honoring individuals for their lifelong contributions to applied sciences and technology.</p></div></div>
+                <div class="award-item reveal delay-100"><div class="award-icon"><i class="fas fa-microscope"></i></div><div class="award-info"><h5>SAST Excellence in Research Award</h5><p>Recognizing outstanding scientific research with significant practical impact.</p></div></div>
+                <div class="award-item reveal delay-200"><div class="award-icon"><i class="fas fa-lightbulb"></i></div><div class="award-info"><h5>SAST Innovation & Technology Award</h5><p>Awarded for pioneering technological advancements and creative problem-solving.</p></div></div>
+                <div class="award-item reveal"><div class="award-icon"><i class="fas fa-user-graduate"></i></div><div class="award-info"><h5>SAST Young Scientist Award</h5><p>Celebrating early-career researchers showing exceptional promise in their fields.</p></div></div>
+                <div class="award-item reveal delay-100"><div class="award-icon"><i class="fas fa-chalkboard-teacher"></i></div><div class="award-info"><h5>SAST Educator of the Year Award</h5><p>Acknowledging excellence and innovation in science and technology education.</p></div></div>
+                <div class="award-item reveal delay-200"><div class="award-icon"><i class="fas fa-female"></i></div><div class="award-info"><h5>SAST Outstanding Woman in Science & Technology Award</h5><p>Honoring women who have made remarkable contributions to applied sciences.</p></div></div>
+                <div class="award-item reveal"><div class="award-icon"><i class="fas fa-leaf"></i></div><div class="award-info"><h5>SAST Green Innovation Award</h5><p>Recognizing sustainable and eco-friendly technological innovations.</p></div></div>
+                <div class="award-item reveal delay-100"><div class="award-icon"><i class="fas fa-handshake"></i></div><div class="award-info"><h5>SAST Industry–Academia Collaboration Award</h5><p>For successful partnerships that bridge research and real-world application.</p></div></div>
+                <div class="award-item reveal delay-200"><div class="award-icon"><i class="fas fa-rocket"></i></div><div class="award-info"><h5>SAST Emerging Technologist Award</h5><p>Awarded to professionals driving impactful advancements in emerging technologies.</p></div></div>
+                <div class="award-item reveal"><div class="award-icon"><i class="fas fa-users"></i></div><div class="award-info"><h5>SAST Community Impact Award</h5><p>Recognizing initiatives that apply science and technology for societal development and welfare.</p></div></div>
+                <div class="award-item reveal delay-100"><div class="award-icon"><i class="fas fa-user-tie"></i></div><div class="award-info"><h5>SAST Excellence in Leadership Award</h5><p>For exemplary leadership in advancing applied sciences and technology initiatives.</p></div></div>
+                <div class="award-item reveal delay-200"><div class="award-icon"><i class="fas fa-globe-americas"></i></div><div class="award-info"><h5>SAST Excellence in Sustainable Development Award</h5><p>For impactful work promoting sustainability through applied science and technology.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="footer reveal">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <div class="logo" style="margin-bottom: 20px;">
+                        <img src="SAST bg remove.png" alt="SAST Logo" class="logo-img">
+                        <span>SAST</span>
+                    </div>
+                    <p>The Society for Applied Sciences and Technology is dedicated to fostering collaboration and innovation.</p>
+                    <div class="social-media">
+                        <a href="https://www.instagram.com/sast.in_?igsh=N293azk2M2VyejBj&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=61589460411088" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.linkedin.com/in/sast-salem-98a742411/" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#membership">Membership</a></li>
+                        <li><a href="#awards">Awards</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p><i class="fas fa-university"></i>Society for Applied Sciences and Technology</p>
+                    <p><i class="fas fa-map-marker-alt"></i>261/3, Anna Nagar, Kannankurichi (PO), Salem, Tamil Nadu, India</p>
+                    <p><i class="fas fa-envelope"></i><a href="mailto:president.sast@gmail.com">president.sast@gmail.com</a></p>
+                    <p><i class="fas fa-phone-alt"></i><a href="tel:+917598965447">+91 75989 65447</a></p>
+                </div>
+            </div>
+            <div class="copyright">&copy; <span id="copyright-year">2026</span> Society for Applied Sciences and Technology. All Rights Reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('canvas-network');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let lastWidth = 0;
+
+        // Particle Class representing nodes in the network
+        class Particle {
+            constructor() {
+                this.reset(true);
+            }
+
+            reset(init = false) {
+                this.x = Math.random() * width;
+                this.y = init ? Math.random() * height : -10;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.radius = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.4 ? 'rgba(198, 151, 73, 0.6)' : 'rgba(255, 255, 255, 0.4)'; // Gold and White/Blue
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Wrap around edges
+                if (this.x < 0 || this.x > width) this.vx = -this.vx;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            if (window.innerWidth === lastWidth && canvas.width !== 0) return; // Prevent mobile height address bar glitches
+            lastWidth = window.innerWidth;
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            particles = [];
+            const particleCount = width < 768 ? 30 : 80; // Scaled count for premium performance
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Update and draw particles
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Draw constellation connection lines
+            ctx.lineWidth = 0.6;
+            const connectionLimit = 120;
+            const connectionLimitSq = connectionLimit * connectionLimit;
+
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p1 = particles[i];
+                    const p2 = particles[j];
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const distSq = dx * dx + dy * dy;
+
+                    if (distSq < connectionLimitSq) {
+                        // Calculate opacity based on distance
+                        const alpha = 1 - (distSq / connectionLimitSq);
+                        ctx.strokeStyle = `rgba(198, 151, 73, ${alpha * 0.25})`; // Faint premium gold line
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        animate();
+
+        // Update copyright year dynamically in footer
+        const copyrightYear = document.getElementById('copyright-year');
+        if (copyrightYear) {
+            copyrightYear.textContent = new Date().getFullYear();
+        }
+
+        // Mobile Menu Toggle
+        function toggleMenu(forceClose = false) {
+            const navLinks = document.getElementById('navLinks');
+            const openIcon = document.querySelector('.menu-open-icon');
+            const closeIcon = document.querySelector('.menu-close-icon');
+            
+            if (!navLinks) return;
+            
+            const isOpen = navLinks.classList.contains('active');
+            const shouldOpen = forceClose ? false : !isOpen;
+            
+            if (shouldOpen) {
+                navLinks.classList.add('active');
+                if (openIcon) openIcon.style.display = 'none';
+                if (closeIcon) closeIcon.style.display = 'inline-block';
+            } else {
+                navLinks.classList.remove('active');
+                if (openIcon) openIcon.style.display = 'inline-block';
+                if (closeIcon) closeIcon.style.display = 'none';
+            }
+        }
+
+        // Auto close and sync mobile menu on window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                toggleMenu(true);
+            }
+        });
+
+        // Initialize Lenis Smooth Scroll defensively
+        let lenis;
+        if (typeof Lenis !== 'undefined') {
+            lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                direction: 'vertical',
+                gestureDirection: 'vertical',
+                smooth: true,
+                mouseMultiplier: 1.0,
+                smoothTouch: false, // Keep touch scroll native for responsiveness
+                touchMultiplier: 1.5,
+                infinite: false
+            });
+
+            // RequestAnimationFrame Loop for Lenis
+            function raf(time) {
+                if (lenis) {
+                    lenis.raf(time);
+                    requestAnimationFrame(raf);
+                }
+            }
+            requestAnimationFrame(raf);
+        }
+
+        // Smooth Scroll Offset & Active Scrollspy
+        document.addEventListener('DOMContentLoaded', () => {
+            // Smooth Scroll on all hash link clicks using Lenis
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    try {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            e.preventDefault();
+                            
+                            // Close mobile menu if active
+                            toggleMenu(true);
+                            
+                            const navbar = document.querySelector('.navbar');
+                            const navbarHeight = navbar ? navbar.offsetHeight : 90;
+                            
+                            if (lenis) {
+                                lenis.scrollTo(targetElement, {
+                                    offset: -navbarHeight,
+                                    duration: 1.2,
+                                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+                                });
+                            } else {
+                                // Safe native fallback
+                                window.scrollTo({
+                                    top: targetElement.offsetTop - navbarHeight,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        }
+                    } catch (err) {
+                        console.warn("Smooth scroll skipped for invalid/non-standard selector:", targetId, err);
+                    }
+                });
+            });
+
+            // Scrollspy - Highlight Active Nav Item on Scroll
+            const sections = document.querySelectorAll('header[id], section[id], footer[id]');
+            const navLinks = document.querySelectorAll('.nav-links a:not(.btn)');
+
+            function activateNavigation() {
+                let scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                const navbar = document.querySelector('.navbar');
+                const navbarHeight = navbar ? navbar.offsetHeight : 90;
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - navbarHeight - 60; // offset buffer
+                    const sectionHeight = section.offsetHeight;
+                    const sectionId = section.getAttribute('id');
+
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${sectionId}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Sync with scroll events
+            window.addEventListener('scroll', activateNavigation);
+            window.addEventListener('resize', activateNavigation);
+            if (lenis) {
+                lenis.on('scroll', activateNavigation); // Sync with Lenis scrolling
+            }
+            activateNavigation(); // Initial check on load
+        });
+
+        // Scroll Reveal
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            const revealOnScroll = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.1 });
+            reveals.forEach(el => revealOnScroll.observe(el));
+        });
+
+        // Hide Preloader on Page Load
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                setTimeout(() => {
+                    preloader.classList.add('fade-out');
+                }, 600); // 600ms grace period for smooth fade out
+            }
+        });
+    </script>
+
+</body>
+</html>
